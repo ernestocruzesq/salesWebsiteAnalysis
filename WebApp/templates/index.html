@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Research</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+</head>
+
+<body class="bg-white text-gray-900 font-sans flex items-center justify-center min-h-screen">
+
+    <!-- Main Container -->
+    <div class="w-full max-w-md bg-gray-100 p-8 rounded-lg shadow-lg">
+        <!-- Heading Section -->
+        <div class="mb-6 text-center">
+            <h1 class="text-3xl font-bold mb-4">Sales Research Tool</h1>
+            <p class="text-lg text-gray-600">
+                Provide the website URL of the company you want to research, and we'll gather the details for you.
+            </p>
+        </div>
+
+        <!-- Form Section -->
+        <form action="/submit" method="post" class="flex flex-col">
+            <div class="mb-4">
+                <input type="url" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       id="companyWebsite" name="companyWebsite" required placeholder="https://example.com">
+            </div>
+            <button type="submit" class="bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition duration-300">
+                Submit
+            </button>
+        </form>
+    </div>
+
+</body>
+
+</html>
