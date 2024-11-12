@@ -1,11 +1,15 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, send_file, render_template, request, redirect, url_for, jsonify
 from bs4 import BeautifulSoup
 from flask_cors import CORS
 from functools import wraps
+from fpdf import FPDF
 import threading
 import requests
 import logging
 import ollama
+import uuid
+import os
+
 
 
 app = Flask(__name__)
@@ -29,6 +33,9 @@ messages = []
 # Roles for chat history
 USER = 'user'
 ASSISTANT = 'assistant'
+
+# Counter for document naming
+counter = 0
 
 # Sending data to Zapier
 def trigger_zapier(company_website):
@@ -197,8 +204,9 @@ def process_in_background(scrap_links):
         1. Carefully filter out redundant information and focus on content that would be persuasive in a sales pitch.
         2. Highlight the unique aspects of the company’s products/services that align with customer needs.
         3. Summarize only the relevant aspects that give insights into the company’s values, goals, and customer relationships.
-        4. Use a serious and objective tone.
+        4. Make it like a report for a sales team, not a propaganda to convince someone, but an objective report of what the company offers.
         5. All the information include must be available in the extracted content, do not include parts to insert more info, as this is the final version.
+        6. Do not talk about our, but their mission, their customers, etc.
 
         Here is the extracted content:
 
@@ -211,17 +219,40 @@ def process_in_background(scrap_links):
         2. **Products/Services**: Outline the company's core offerings, emphasizing any products/services that differentiate it from others.
         3. **Value Proposition**: Summarize key value propositions that are important for the sales team to understand for pitching.
 
-        Use this information to create an engaging, sales-focused article that effectively communicates why this prospect could be a valuable client.
+        Use this to produce a concise, informative article about this prospect for the sales team.
         """
 
         # Get response from Ollama
         ollama_document = chat(prompt_document)
 
-        print(ollama_document)
+        # Create a unique filename for the PDF using UUID or timestamp
+        unique_id = str(uuid.uuid4())  # You could also use time.strftime("%Y%m%d-%H%M%S")
+        output_filename = f"sales_prospect_report_{unique_id}.pdf"
+
+        # Create a PDF report from the LLM output
+        create_pdf_from_llm_output(ollama_document, output_filename=output_filename)
+
+        # Return a success response
+        return jsonify({"message": "PDF generated successfully"}), 200
 
 
     except Exception as e:
         logging.error("Error while processing data in background: %s", str(e))
+
+
+@app.route('/download/<filename>', methods=['GET'])
+@requires_auth
+def download(filename):
+    try:
+        pdf_path = filename
+        if not os.path.exists(pdf_path):
+            return jsonify({"error": "PDF not found"}), 404
+
+        return send_file(pdf_path, as_attachment=True)
+
+    except Exception as e:
+        logging.error("Error while sending PDF for download: %s", str(e))
+        return jsonify({"error": "Failed to download PDF"}), 400
 
 
 # Flask Endpoint for Receiving Initial Request

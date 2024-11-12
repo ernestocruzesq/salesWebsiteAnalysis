@@ -4,9 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sales Research</title>
+    <title>Sales Research Tool</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-
 </head>
 
 <body class="bg-white text-gray-900 font-sans flex items-center justify-center min-h-screen">
@@ -22,16 +21,93 @@
         </div>
 
         <!-- Form Section -->
-        <form action="/submit" method="post" class="flex flex-col">
+        <div class="flex flex-col">
             <div class="mb-4">
                 <input type="url" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                        id="companyWebsite" name="companyWebsite" required placeholder="https://example.com">
             </div>
-            <button type="submit" class="bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition duration-300">
-                Submit
+            <button onclick="generatePDF()" class="bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition duration-300">
+                Generate and Download PDF
             </button>
-        </form>
+        </div>
     </div>
+
+    <!-- JavaScript Section -->
+    <script>
+    function generatePDF() {
+        // Get the value from the input field
+        const companyWebsite = document.getElementById('companyWebsite').value;
+
+        // Validate that the URL is not empty
+        if (!companyWebsite) {
+            alert("Please enter a valid company website URL.");
+            return;
+        }
+
+        // Prepare the data to send to the Flask endpoint
+        const data = {
+            scrapLinks: companyWebsite
+        };
+
+        // Step 1: Send POST request to generate the PDF
+        fetch('/process', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Basic ' + btoa('username:password')  // Include Basic Authentication header
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to generate the PDF');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.filename) {
+                // Step 2: Download the PDF using the filename returned from the process step
+                downloadPDF(data.filename);
+            } else {
+                throw new Error('No filename received from server');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while generating the PDF. Please try again.');
+        });
+    }
+
+    function downloadPDF(filename) {
+        // Step 2: Send GET request to download the generated PDF with the unique filename
+        fetch(`/download/${filename}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Basic ' + btoa('username:password')  // Include Basic Authentication header
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to download the PDF');
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            // Create a link element to initiate the download
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename; // Use the provided filename for the download
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while downloading the PDF. Please try again.');
+        });
+    }
+    </script>
 
 </body>
 
