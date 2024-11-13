@@ -158,11 +158,11 @@ def create_pdf_from_llm_output(llm_output, output_filename='sales_prospect_repor
 
     # Add title page
     pdf.add_page()
-    pdf.set_font("DejaVu", 'B', 16)
+    pdf.set_font("DejaVu", '', 16)
     pdf.cell(0, 10, "Sales Prospect Research Report", ln=True, align='C')
     pdf.ln(10)
 
-    pdf.set_font("DejaVu", 'B', 12)
+    pdf.set_font("DejaVu", '', 12)
     pdf.cell(0, 10, "Generated Report for Sales Team", ln=True, align='C')
     pdf.ln(20)
 
@@ -176,7 +176,7 @@ def create_pdf_from_llm_output(llm_output, output_filename='sales_prospect_repor
             pdf.ln(5)
         else:
             if line.lower().startswith(("introduction", "products/services", "success stories", "value proposition")):
-                pdf.set_font("DejaVu", 'B', 14)
+                pdf.set_font("DejaVu", '', 14)
                 pdf.cell(0, 10, line, ln=True)
                 pdf.set_font("DejaVu", '', 12)
                 pdf.ln(5)
@@ -186,7 +186,7 @@ def create_pdf_from_llm_output(llm_output, output_filename='sales_prospect_repor
     pdf.output(output_filename)
 
 # Function to Process Data in the Background
-def process_in_background(scrap_links):
+def process_in_background(scrap_links, output_filename):
     with app.app_context():
         try:
             # Construct the sales suggestion prompt for Ollama
@@ -240,10 +240,6 @@ def process_in_background(scrap_links):
             # Get response from Ollama
             ollama_document = chat(prompt_document)
 
-            # Create a unique filename for the PDF using UUID or timestamp
-            unique_id = str(uuid.uuid4())  # You could also use time.strftime("%Y%m%d-%H%M%S")
-            output_filename = f"sales_prospect_report_{unique_id}.pdf"
-
             # Create a PDF report from the LLM output
             create_pdf_from_llm_output(ollama_document, output_filename=output_filename)
 
@@ -293,12 +289,16 @@ def process():
         if not scrap_links:
             return jsonify({"error": "Missing 'scrapLinks' key in JSON data"}), 400
 
+        # Create a unique filename for the PDF
+        unique_id = str(uuid.uuid4())  # Use UUID to create unique identifier for PDF
+        output_filename = f"sales_prospect_report_{unique_id}.pdf"
+
         # Start background thread to process data with Flask app context
-        background_thread = threading.Thread(target=process_in_background, args=(scrap_links,))
+        background_thread = threading.Thread(target=process_in_background, args=(scrap_links, output_filename))
         background_thread.start()
 
-        # Respond to Zapier immediately to avoid timeout
-        return jsonify({"status": "Processing started"}), 200
+        # Respond to the client with the unique identifier for polling
+        return jsonify({"status": "Processing started", "filename": output_filename}), 200
 
     except Exception as e:
         logging.error("Error while processing request: %s", str(e))

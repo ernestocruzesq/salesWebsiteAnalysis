@@ -35,136 +35,106 @@
     <!-- JavaScript Section -->
     <script>
     function generatePDF() {
-        // Get the value from the input field
-        const companyWebsite = document.getElementById('companyWebsite').value;
+    // Get the value from the input field
+    const companyWebsite = document.getElementById('companyWebsite').value;
 
-        // Validate that the URL is not empty
-        if (!companyWebsite) {
-            alert("Please enter a valid company website URL.");
-            return;
+    // Validate that the URL is not empty
+    if (!companyWebsite) {
+        alert("Please enter a valid company website URL.");
+        return;
+    }
+
+    // Prepare the data to send to the Flask endpoint
+    const data = {
+        scrapLinks: companyWebsite
+    };
+
+    // Step 1: Send POST request to generate the PDF
+    fetch('/process', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic ' + btoa('username:password')  // Include Basic Authentication header
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to start the PDF generation');
         }
+        return response.json();
+    })
+    .then(data => {
+        if (data.filename) {
+            // Step 2: Start polling for the status of the PDF using the returned filename
+            pollForPDF(data.filename);
+        } else {
+            throw new Error('No filename received from server');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while generating the PDF. Please try again.');
+    });
+}
 
-        // Prepare the data to send to the Flask endpoint
-        const data = {
-            scrapLinks: companyWebsite
-        };
-
-        // Step 1: Send POST request to generate the PDF
-        fetch('/process', {
-            method: 'POST',
+function pollForPDF(filename) {
+    const checkStatusInterval = setInterval(() => {
+        fetch(`/check_status/${filename}`, {
+            method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
                 'Authorization': 'Basic ' + btoa('username:password')  // Include Basic Authentication header
-            },
-            body: JSON.stringify(data)
+            }
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Failed to start the PDF generation');
+                throw new Error('Failed to check the PDF status');
             }
             return response.json();
         })
         .then(data => {
-            if (data.filename) {
-                // Step 2: Start polling for the status of the PDF
-                pollForPDF(data.filename);
-            } else {
-                throw new Error('No filename received from server');
+            if (data.status === "ready") {
+                // Clear the interval once the PDF is ready
+                clearInterval(checkStatusInterval);
+
+                // Step 3: Download the PDF
+                downloadPDF(filename);
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while generating the PDF. Please try again.');
         });
-    }
+    }, 3000); // Poll every 3 seconds
+}
 
-    function pollForPDF(filename) {
-        const checkStatusInterval = setInterval(() => {
-            fetch(`/check_status/${filename}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': 'Basic ' + btoa('username:password')  // Include Basic Authentication header
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to check the PDF status');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.status === "ready") {
-                    // Clear the interval once the PDF is ready
-                    clearInterval(checkStatusInterval);
-
-                    // Step 3: Download the PDF
-                    downloadPDF(filename);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }, 3000); // Poll every 3 seconds
-    }
-
-    function downloadPDF(filename) {
-        // Step 4: Send GET request to download the generated PDF with the unique filename
-        fetch(`/download/${filename}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': 'Basic ' + btoa('username:password')  // Include Basic Authentication header
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to download the PDF');
-            }
-            return response.blob();
-        })
-        .then(blob => {
-            // Create a link element to initiate the download
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename; // Use the provided filename for the download
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while downloading the PDF. Please try again.');
-        });
-    }
-
-    function downloadPDF(filename) {
-        // Step 2: Send GET request to download the generated PDF with the unique filename
-        fetch(`/download/${filename}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': 'Basic ' + btoa('username:password')  // Include Basic Authentication header
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to download the PDF');
-            }
-            return response.blob();
-        })
-        .then(blob => {
-            // Create a link element to initiate the download
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename; // Use the provided filename for the download
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while downloading the PDF. Please try again.');
-        });
+function downloadPDF(filename) {
+    // Step 4: Send GET request to download the generated PDF with the unique filename
+    fetch(`/download/${filename}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Basic ' + btoa('username:password')  // Include Basic Authentication header
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to download the PDF');
+        }
+        return response.blob();
+    })
+    .then(blob => {
+        // Create a link element to initiate the download
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename; // Use the provided filename for the download
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while downloading the PDF. Please try again.');
+    });
     }
     </script>
 
