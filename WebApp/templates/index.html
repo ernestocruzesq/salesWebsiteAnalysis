@@ -60,14 +60,14 @@
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Failed to generate the PDF');
+                throw new Error('Failed to start the PDF generation');
             }
             return response.json();
         })
         .then(data => {
             if (data.filename) {
-                // Step 2: Download the PDF using the filename returned from the process step
-                downloadPDF(data.filename);
+                // Step 2: Start polling for the status of the PDF
+                pollForPDF(data.filename);
             } else {
                 throw new Error('No filename received from server');
             }
@@ -75,6 +75,65 @@
         .catch(error => {
             console.error('Error:', error);
             alert('An error occurred while generating the PDF. Please try again.');
+        });
+    }
+
+    function pollForPDF(filename) {
+        const checkStatusInterval = setInterval(() => {
+            fetch(`/check_status/${filename}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Basic ' + btoa('username:password')  // Include Basic Authentication header
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to check the PDF status');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === "ready") {
+                    // Clear the interval once the PDF is ready
+                    clearInterval(checkStatusInterval);
+
+                    // Step 3: Download the PDF
+                    downloadPDF(filename);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }, 3000); // Poll every 3 seconds
+    }
+
+    function downloadPDF(filename) {
+        // Step 4: Send GET request to download the generated PDF with the unique filename
+        fetch(`/download/${filename}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Basic ' + btoa('username:password')  // Include Basic Authentication header
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to download the PDF');
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            // Create a link element to initiate the download
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename; // Use the provided filename for the download
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while downloading the PDF. Please try again.');
         });
     }
 

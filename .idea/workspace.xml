@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2a88b9c3-8af0-44fa-b54c-e7ce4130a025" name="Changes" comment="LLMs adaptation">
+    <list default="true" id="2a88b9c3-8af0-44fa-b54c-e7ce4130a025" name="Changes" comment="LLMs adaptation PDF">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WebApp/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/WebApp/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WebApp/sales_prospect_report_15b2b7e8-0b7a-41d6-938b-aae4e9dcdb1d.pdf" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/WebApp/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/WebApp/templates/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -133,7 +134,23 @@
       <option name="project" value="LOCAL" />
       <updated>1731429855519</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="LLMs adaptation PDF">
+      <option name="closed" value="true" />
+      <created>1731450711091</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1731450711091</updated>
+    </task>
+    <task id="LOCAL-00003" summary="LLMs adaptation PDF">
+      <option name="closed" value="true" />
+      <created>1731450716455</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1731450716455</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -155,6 +172,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="LLMs adaptation" />
-    <option name="LAST_COMMIT_MESSAGE" value="LLMs adaptation" />
+    <MESSAGE value="LLMs adaptation PDF" />
+    <option name="LAST_COMMIT_MESSAGE" value="LLMs adaptation PDF" />
   </component>
 </project>
