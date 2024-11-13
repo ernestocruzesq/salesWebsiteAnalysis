@@ -5,20 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2a88b9c3-8af0-44fa-b54c-e7ce4130a025" name="Changes" comment="Final edits">
-      <change afterPath="$PROJECT_DIR$/WebApp/DejaVu Fonts License.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebApp/DejaVuSans-Bold.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebApp/DejaVuSans-BoldOblique.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebApp/DejaVuSans-ExtraLight.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebApp/DejaVuSans-Oblique.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebApp/DejaVuSans.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebApp/DejaVuSansCondensed-Bold.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebApp/DejaVuSansCondensed-BoldOblique.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebApp/DejaVuSansCondensed-Oblique.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebApp/DejaVuSansCondensed.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/WebApp/sales_prospect_report_8d46bbea-7cd2-4769-aca0-eb7d7af9d088.pdf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WebApp/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/WebApp/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WebApp/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/WebApp/templates/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -176,7 +163,15 @@
       <option name="project" value="LOCAL" />
       <updated>1731529153337</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Final edits">
+      <option name="closed" value="true" />
+      <created>1731529687745</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1731529687745</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
