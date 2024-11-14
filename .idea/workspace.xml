@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2a88b9c3-8af0-44fa-b54c-e7ce4130a025" name="Changes" comment="Loading" />
+    <list default="true" id="2a88b9c3-8af0-44fa-b54c-e7ce4130a025" name="Changes" comment="Final edits">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -30,7 +32,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/ernestocruzesq/salesWebsiteAnalysis.git&quot;,
-    &quot;accountId&quot;: &quot;a6e5edc9-aa1c-4e4d-ae8c-c749987ba352&quot;
+    &quot;accountId&quot;: &quot;73ec13ff-9659-43c7-a49a-808f99c63ce5&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
