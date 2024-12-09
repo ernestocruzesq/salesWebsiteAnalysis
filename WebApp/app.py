@@ -35,27 +35,56 @@ ASSISTANT = 'assistant'
 # Counter for document naming
 counter = 0
 
-# Sending data to Zapier
-def trigger_zapier(company_website):
-    webhook_url = 'https://hooks.zapier.com/hooks/catch/20661712/258qefn/'
-    data = {"company_website": company_website}
-    response = requests.post(webhook_url, json=data)
-    return response.status_code
-
 @app.route('/submit', methods=['POST'])
 def submit():
     # Get the company website URL from the form submission
     company_website = request.form['companyWebsite']
 
-    # Trigger Zapier webhook
-    response_code = trigger_zapier(company_website)
-    if response_code == 200:
-        print("Zap triggered successfully.")
-    else:
-        print(f"Failed to trigger Zap: {response_code}")
+    print(f"Processing company website locally for links: {company_website}")
 
-    # Redirect back to home page or render a success page
+    # Perform local scraping to extract links
+    try:
+        # Scrape the links from the website
+        extracted_links = extract_links(company_website)
+
+        # Optionally, save the links or process them further
+        scrape_links_full_text(company_website, extracted_links)
+
+    except Exception as e:
+
+        print(f"ERROR: {e}")
+
+    # Redirect back to home page
     return redirect(url_for('index'))
+
+def extract_links(url):
+    """
+    Extracts all hyperlinks (anchor tags) from the given URL.
+
+    Args:
+    - url (str): The URL of the website to scrape.
+
+    Returns:
+    - list: A list of unique links found on the website.
+    """
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    }
+
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()  # Raise an error for bad responses
+
+    soup = BeautifulSoup(response.content, 'html.parser')
+
+    # Find all anchor tags and extract href attributes
+    links = set()
+    for anchor in soup.find_all('a', href=True):
+        href = anchor['href']
+        # Resolve relative links to absolute URLs
+        full_url = requests.compat.urljoin(url, href)
+        links.add(full_url)
+
+    return list(links)
 
 
 # Authentication Functions
