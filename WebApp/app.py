@@ -15,11 +15,6 @@ CORS(app)
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
 logging.basicConfig(level=logging.DEBUG)
 
-@app.route('/')
-def index():
-    # Render the homepage with the form to input the website URL
-    return render_template('index.html')
-
 # Define the username and password for Basic Authentication
 USERNAME = "username"
 PASSWORD = "password"
@@ -35,27 +30,6 @@ ASSISTANT = 'assistant'
 # Counter for document naming
 counter = 0
 
-@app.route('/submit', methods=['POST'])
-def submit():
-    # Get the company website URL from the form submission
-    company_website = request.form['companyWebsite']
-
-    print(f"Processing company website locally for links: {company_website}")
-
-    # Perform local scraping to extract links
-    try:
-        # Scrape the links from the website
-        extracted_links = extract_links(company_website)
-
-        # Optionally, save the links or process them further
-        scrape_links_full_text(company_website, extracted_links)
-
-    except Exception as e:
-
-        print(f"ERROR: {e}")
-
-    # Redirect back to home page
-    return redirect(url_for('index'))
 
 def extract_links(url):
     """
@@ -121,6 +95,7 @@ def chat(message):
     add_history(complete_message, ASSISTANT)
     return complete_message
 
+
 # Function to scrape links using BeautifulSoup
 def scrape_links_full_text(links):
     """
@@ -163,18 +138,7 @@ def scrape_links_full_text(links):
 
     return scraped_data
 
-@app.route('/check_status/<filename>', methods=['GET'])
-@requires_auth
-def check_status(filename):
-    # Check if the file exists on the server
-    pdf_path = filename
-    if os.path.exists(pdf_path):
-        return jsonify({"status": "ready"}), 200
-    else:
-        return jsonify({"status": "processing"}), 202
 
-
-# Function to create PDF from LLM output
 # Function to create PDF from LLM output
 def create_pdf_from_llm_output(llm_output, output_filename='sales_prospect_report.pdf'):
     pdf = FPDF()
@@ -214,10 +178,14 @@ def create_pdf_from_llm_output(llm_output, output_filename='sales_prospect_repor
 
     pdf.output(output_filename)
 
+
 # Function to Process Data in the Background
-def process_in_background(scrap_links, output_filename):
+def process_in_background(company_website, output_filename):
     with app.app_context():
         try:
+            # Get links
+            scrap_links = extract_links(company_website)
+
             # Construct the sales suggestion prompt for Ollama
             prompt_sales = (
                 f"Identify which of the following links would be most useful for creating a sales document. "
@@ -279,6 +247,29 @@ def process_in_background(scrap_links, output_filename):
             logging.error("Error while processing data in background: %s", str(e))
 
 
+@app.route('/')
+def index():
+    # Render the homepage with the form to input the website URL
+    return render_template('index.html')
+
+
+@app.route('/submit', methods=['POST'])
+def submit():
+
+    # Redirect back to home page
+    return redirect(url_for('index'))
+
+@app.route('/check_status/<filename>', methods=['GET'])
+@requires_auth
+def check_status(filename):
+    # Check if the file exists on the server
+    pdf_path = filename
+    if os.path.exists(pdf_path):
+        return jsonify({"status": "ready"}), 200
+    else:
+        return jsonify({"status": "processing"}), 202
+
+
 @app.route('/download/<filename>', methods=['GET'])
 @requires_auth
 def download(filename):
@@ -295,12 +286,9 @@ def download(filename):
 
 
 # Flask Endpoint for Receiving Initial Request
-@app.route('/process', methods=['POST'])
+@app.route('/process', methods=['GET', 'POST'])
 @requires_auth
 def process():
-    # Log headers and data to understand what is being received
-    logging.debug("Headers: %s", request.headers)
-    logging.debug("Data received: %s", request.data)
 
     # Check if Content-Type starts with application/json
     if not request.content_type or not request.content_type.startswith('application/json'):
@@ -313,9 +301,9 @@ def process():
             return jsonify({"error": "No JSON data received"}), 400
 
         # Extract 'scrapLinks' from JSON data
-        scrap_links = data.get('scrapLinks', None)
+        company_website = data.get('companyWebsite', None)
 
-        if not scrap_links:
+        if not company_website:
             return jsonify({"error": "Missing 'scrapLinks' key in JSON data"}), 400
 
         # Create a unique filename for the PDF
@@ -323,7 +311,7 @@ def process():
         output_filename = f"sales_prospect_report_{unique_id}.pdf"
 
         # Start background thread to process data with Flask app context
-        background_thread = threading.Thread(target=process_in_background, args=(scrap_links, output_filename))
+        background_thread = threading.Thread(target=process_in_background, args=(company_website, output_filename))
         background_thread.start()
 
         # Respond to the client with the unique identifier for polling
@@ -332,7 +320,6 @@ def process():
     except Exception as e:
         logging.error("Error while processing request: %s", str(e))
         return jsonify({"error": "Failed to parse JSON data"}), 400
-
 
 
 if __name__ == '__main__':
