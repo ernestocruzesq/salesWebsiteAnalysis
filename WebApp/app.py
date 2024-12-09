@@ -1,5 +1,6 @@
 from flask import Flask, send_file, render_template, request, redirect, url_for, jsonify
 from bs4 import BeautifulSoup
+from urllib.parse import urlparse
 from flask_cors import CORS
 from functools import wraps
 from fpdf import FPDF
@@ -81,6 +82,11 @@ def requires_auth(f):
     return decorated
 
 
+def is_valid_url(url):
+    parsed = urlparse(url)
+    return bool(parsed.netloc) and bool(parsed.scheme)
+
+
 # Ollama Chat Helper Functions
 def add_history(content, role):
     messages.append({'role': role, 'content': content})
@@ -112,6 +118,8 @@ def scrape_links_full_text(links):
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
     }
+
+    links = [link for link in links if is_valid_url(link)]
 
     for link in links:
         try:
@@ -255,6 +263,10 @@ def index():
 
 @app.route('/submit', methods=['POST'])
 def submit():
+
+    company_website = request.form.get('companyWebsite')  # Retrieve form data
+    if not company_website:
+        return jsonify({"error": "No company website provided"}), 400
 
     # Redirect back to home page
     return redirect(url_for('index'))
