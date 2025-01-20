@@ -55,6 +55,7 @@ Then, it will locally run in http://127.0.0.1:5000.
 ---
 ## Project Structure
 
+```bash
 repository-name/
 │  
 ├── data/                  # Sample data files  
@@ -64,5 +65,4 @@ repository-name/
 ├── requirements.txt       # Dependencies  
 ├── README.md              # Project documentation  
 └── LICENSE                # Licensing information  
-
-
+```
