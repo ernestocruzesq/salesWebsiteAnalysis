@@ -44,4 +44,25 @@ Install the required libraries from the requirements.txt file by running:
    ```
 ---
 
+## Usage
+To generate the PDF, start the web app running:
+```bash
+python run.py
+```
+
+Then, it will locally run in http://127.0.0.1:5000.
+
+---
+## Project Structure
+
+repository-name/
+│  
+├── data/                  # Sample data files  
+├── src/                   # Source code files  
+│   ├── sales_report.py    # Main script  
+│   └── utils.py           # Helper functions  
+├── requirements.txt       # Dependencies  
+├── README.md              # Project documentation  
+└── LICENSE                # Licensing information  
+
 
