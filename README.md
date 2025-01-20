@@ -25,16 +25,16 @@ Follow these steps to set up the project locally:
 2. **Create and activate a virtual environment**
 It is recommended that a virtual environment be used to manage dependencies. Run the following commands:
 
-On macOS/Linux:
+   On macOS/Linux:
    ```bash
-   python3 -m venv venv
-   source venv/bin/activate
+   python3 -m venv salesWebsiteAnalysis
+   source salesWebsiteAnalysis/bin/activate
    ```
 
 On Windows:
    ```bash
-   python -m venv venv
-   venv\Scripts\activate
+   python -m venv salesWebsiteAnalysis
+   salesWebsiteAnalysis\Scripts\activate
    ```
 
 3. **Install dependencies**
