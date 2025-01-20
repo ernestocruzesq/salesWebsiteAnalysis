@@ -31,7 +31,7 @@ It is recommended that a virtual environment be used to manage dependencies. Run
    source salesWebsiteAnalysis/bin/activate
    ```
 
-On Windows:
+   On Windows:
    ```bash
    python -m venv salesWebsiteAnalysis
    salesWebsiteAnalysis\Scripts\activate
