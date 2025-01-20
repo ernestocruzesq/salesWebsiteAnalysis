@@ -68,3 +68,12 @@ app/
 ├── auth.py                # Authorization functions
 └── routes.py              
 ```
+---
+License
+
+This project is licensed under the MIT License.
+
+---
+For questions or feedback, feel free to reach out:
+
+      LinkedIn: https://www.linkedin.com/in/ernesto-cruz-694132160/
