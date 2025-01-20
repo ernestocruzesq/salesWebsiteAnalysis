@@ -8,8 +8,6 @@ This repository demonstrates the use of a Large Language Model (LLM) to generate
 ## Features
 - Automatically parses sales data from a home webpage.
 - Generates a structured and concise sales report.
-- Uses a customizable prompt for various webpage formats.
-- Includes error handling for missing or malformed data.
 
 ---
 
@@ -53,16 +51,20 @@ python run.py
 Then, it will locally run in http://127.0.0.1:5000.
 
 ---
-## Project Structure
+## WebApp Structure
 
 ```bash
-repository-name/
+app/
 │  
-├── data/                  # Sample data files  
-├── src/                   # Source code files  
-│   ├── sales_report.py    # Main script  
-│   └── utils.py           # Helper functions  
-├── requirements.txt       # Dependencies  
-├── README.md              # Project documentation  
-└── LICENSE                # Licensing information  
+├── documents/             # Generated PDFs are saved here
+├── misecellaneous/        # Font data
+├── services/        
+│   ├── ollama.py          # The LLMs script and prompt
+│   ├── pdf_generator.py   # The functions to generate the PDFs
+│   ├── processing.py      # Background processing functions
+│   └── scraping.py        # Scraping functions
+├── templates/              
+│   └── index.html         # Main web page design. 
+├── auth.py                # Authorization functions
+└── routes.py              
 ```
